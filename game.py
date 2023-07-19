@@ -1,8 +1,8 @@
 try:
-    from PyQt6.QtCore import QDir, QFileInfo, QStandardPaths, qInfo
+    from PyQt6.QtCore import QDir, QFileInfo, QStandardPaths
     from PyQt6.QtGui import QIcon
-except:
-    from PyQt5.QtCore import QDir, QFileInfo, QStandardPaths, qInfo
+except Exception:
+    from PyQt5.QtCore import QDir, QFileInfo, QStandardPaths
     from PyQt5.QtGui import QIcon
 
 import mobase
@@ -17,7 +17,6 @@ from .mod import ModDataChecker
 
 
 class GamePlugin(mobase.IPluginGame):
-
     _gamePath: str
     _features: Dict
     _organizer: mobase.IOrganizer
@@ -36,27 +35,27 @@ class GamePlugin(mobase.IPluginGame):
 
     def name(self) -> str:
         return "Crusader Kings III"
-    
+
     def localizedName(self) -> str:
         return localize_string(self.name())
-    
+
     def author(self) -> str:
         return "Cram42"
 
     def description(self) -> str:
         return localize_string("Adds basic support for Crusader Kings III")
-    
+
     def version(self) -> mobase.VersionInfo:
         return mobase.VersionInfo(0, 1, 0)
-    
+
     def isActive(self) -> bool:
         if not self._organizer.managedGame():
             return False
         return self.name() == self._organizer.managedGame().name()
-    
+
     def settings(self) -> List[mobase.PluginSetting]:
         return []
-    
+
     # IPluginGame Implementation:
 
     def CCPlugins() -> List[str]:
@@ -64,7 +63,7 @@ class GamePlugin(mobase.IPluginGame):
 
     def DLCPlugins() -> List[str]:
         return []
-    
+
     def binaryName(self) -> str:
         return "binaries/ck3.exe"
 
@@ -74,16 +73,23 @@ class GamePlugin(mobase.IPluginGame):
     def detectGame(self):
         self.setGamePath("")
 
-        if self.steamAPPId() in find_steam_games():
+        steam_games = find_steam_games()
+        if self.steamAPPId() in steam_games:
             self.setGamePath(steam_games[self.steamAPPId()])
             return
-    
+
     def documentsDirectory(self) -> QDir:
-        docs_path = QStandardPaths.writableLocation(QStandardPaths.DocumentsLocation)
-        full_path = os.path.join(docs_path, "Paradox Interactive/Crusader Kings III")
+        docs_path = QStandardPaths.writableLocation(
+            QStandardPaths.DocumentsLocation
+        )
+        full_path = os.path.join(
+            docs_path, "Paradox Interactive/Crusader Kings III"
+        )
         return QDir(full_path)
 
-    def executableForcedLoads(self) -> List[mobase.ExecutableForcedLoadSetting]:
+    def executableForcedLoads(
+        self,
+    ) -> List[mobase.ExecutableForcedLoadSetting]:
         return []
 
     def executables(self) -> List[mobase.ExecutableInfo]:
@@ -91,18 +97,25 @@ class GamePlugin(mobase.IPluginGame):
             (
                 mobase.ExecutableInfo(
                     self.gameName(),
-                    QFileInfo(self.gameDirectory().absoluteFilePath(self.binaryName()))
-                )
-                .withWorkingDirectory(self.gameDirectory())
+                    QFileInfo(
+                        self.gameDirectory().absoluteFilePath(
+                            self.binaryName()
+                        )
+                    ),
+                ).withWorkingDirectory(self.gameDirectory())
             ),
             (
                 mobase.ExecutableInfo(
                     "{} (Debug Mode)".format(self.gameName()),
-                    QFileInfo(self.gameDirectory().absoluteFilePath(self.binaryName()))
+                    QFileInfo(
+                        self.gameDirectory().absoluteFilePath(
+                            self.binaryName()
+                        )
+                    ),
                 )
                 .withWorkingDirectory(self.gameDirectory())
                 .withArgument("-debug_mode")
-            )
+            ),
         ]
 
     def _featureList(self):
@@ -115,10 +128,10 @@ class GamePlugin(mobase.IPluginGame):
         return mobase.getIconForExecutable(
             self.gameDirectory().absoluteFilePath(self.binaryName())
         )
-    
+
     def gameName(self) -> str:
         return "Crusader Kings III"
-    
+
     def gameNexusName(self) -> str:
         return self.gameShortName()
 
@@ -132,13 +145,13 @@ class GamePlugin(mobase.IPluginGame):
         return mobase.getFileVersion(
             self.gameDirectory().absoluteFilePath(self.binaryName())
         )
-    
+
     def getLauncherName(self) -> str:
         return ""
 
     def iniFiles(self) -> List[str]:
         return []
-    
+
     def initializeProfile(self, directory: QDir, settings: int):
         pass
 
@@ -156,14 +169,14 @@ class GamePlugin(mobase.IPluginGame):
 
     def nexusGameID(self) -> int:
         return 0
-    
+
     def nexusModOrganizerID(self) -> int:
         return 0
 
     def primaryPlugins(self) -> List[str]:
         return []
 
-    def primarySources(self) -> List [str]:
+    def primarySources(self) -> List[str]:
         return []
 
     def savesDirectory(self) -> QDir:
@@ -174,12 +187,12 @@ class GamePlugin(mobase.IPluginGame):
 
     def setGameVariant(self, variant: str):
         pass
-    
+
     def sortMechanism(self) -> mobase.SortMechanism:
         return mobase.SortMechanism.NONE
-    
+
     def steamAPPId(self) -> str:
         return "1158310"
-    
+
     def validShortNames(self) -> List[str]:
         return []

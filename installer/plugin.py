@@ -1,7 +1,7 @@
 try:
-    from PyQt6.QtCore import qCritical, qInfo  # noqa:F401
+    from PyQt6.QtCore import qCritical, qInfo
 except Exception:
-    from PyQt5.QtCore import qCritical, qInfo  # noqa:F401
+    from PyQt5.QtCore import qCritical, qInfo
 
 import mobase
 

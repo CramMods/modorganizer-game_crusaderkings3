@@ -1,6 +1,6 @@
 try:
     from PyQt6.QtWidgets import QApplication
-except:
+except Exception:
     from PyQt5.QtWidgets import QApplication
 
 
