@@ -1,8 +1,3 @@
-try:
-    from PyQt6.QtCore import qInfo  # noqa:F401
-except Exception:
-    from PyQt5.QtCore import qInfo  # noqa:F401
-
 import mobase
 import re
 
