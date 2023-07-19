@@ -7,8 +7,8 @@ import mobase
 
 from typing import List, Union
 
-from .mod import Descriptor, TreeHelper
-from .localization import localize_string
+from ..mod import Descriptor, TreeHelper
+from ..localization import localize_string
 
 
 class ArchiveInstaller(mobase.IPluginInstallerSimple):
