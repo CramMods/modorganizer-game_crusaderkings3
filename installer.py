@@ -11,7 +11,7 @@ from .mod import Descriptor, TreeHelper
 from .localization import localize_string
 
 
-class ArchiveInstallerPlugin(mobase.IPluginInstallerSimple):
+class ArchiveInstaller(mobase.IPluginInstallerSimple):
 
     _descriptor: Descriptor
     _organizer: mobase.IOrganizer

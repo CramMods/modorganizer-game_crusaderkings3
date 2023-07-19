@@ -1,8 +1,8 @@
 from .game import GamePlugin
-from .installer import ArchiveInstallerPlugin
+from .installer import ArchiveInstaller
 
 def createPlugins():
     return [
         GamePlugin(),
-        ArchiveInstallerPlugin()
+        ArchiveInstaller()
     ]
