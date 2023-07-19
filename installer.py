@@ -68,13 +68,13 @@ class ArchiveInstaller(mobase.IPluginInstallerSimple):
             try:
                 version = mobase.VersionInfo(self._descriptor.version())
                 new_mod.setVersion(version)
-            except Exception:
-                qInfo(
-                    "[{}] failed to set version to {}".format(
-                        new_mod.name(), version
+            except Exception as e:
+                qCritical(
+                    "[{}] failed to set version to {}. {}".format(
+                        new_mod.name(), version, str(e)
                     )
                 )
-                pass
+                return
 
             # Set categories
             for category in new_mod.categories():
@@ -82,10 +82,10 @@ class ArchiveInstaller(mobase.IPluginInstallerSimple):
             for category in self._descriptor.categories():
                 try:
                     new_mod.addCategory(category)
-                except Exception:
+                except Exception as e:
                     qInfo(
-                        "[{}] failed to add category {}".format(
-                            new_mod.name(), category
+                        "[{}] failed to add category {}. {}".format(
+                            new_mod.name(), category, str(e)
                         )
                     )
                     pass
