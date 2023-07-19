@@ -99,10 +99,6 @@ class ArchiveInstaller(mobase.IPluginInstallerSimple):
         version: str,
         modId: int,
     ) -> Union[mobase.InstallResult, mobase.IFileTree]:
-        if not TreeHelper.can_be_installable(tree):
-            qCritical("Install Failed: can_be_installable = False")
-            return mobase.InstallResult.NOT_ATTEMPTED
-
         install_tree = TreeHelper.to_installable(tree)
         if not install_tree:
             qCritical("Install Failed: to_installable returned None")
