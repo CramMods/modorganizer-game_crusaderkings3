@@ -43,7 +43,7 @@ class ArchiveInstaller(mobase.IPluginInstallerSimple):
         )
 
     def version(self) -> mobase.VersionInfo:
-        return mobase.VersionInfo(0, 1, 0)
+        return mobase.VersionInfo(0, 2, 0)
 
     def isActive(self) -> bool:
         return self._organizer.pluginSetting(self.name(), "enabled")
