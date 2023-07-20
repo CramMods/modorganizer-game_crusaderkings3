@@ -5,9 +5,10 @@ from typing import List
 
 
 class Descriptor:
-    _name: str
-    _version: str
-    _categories: List[str]
+    _version: str = ""
+    _name: str = ""
+    _tags: List[str] = []
+    _supported_version: str = ""
 
     def __init__(self, descriptor_path: str):
         with open(
@@ -15,29 +16,38 @@ class Descriptor:
         ) as descriptor_file:
             content = descriptor_file.read()
 
-        name_match = re.search(r"^name=\"(.+)\"$", content, re.MULTILINE)
-        if name_match:
-            self._name = name_match.group(1)
+        match = re.search(r"^version=\"(.+)\"$", content, re.MULTILINE)
+        if match:
+            self._version = match.group(1)
 
-        version_match = re.search(r"^version=\"(.+)\"$", content, re.MULTILINE)
-        if version_match:
-            self._version = version_match.group(1)
-
-        tags_match = re.search(r"tags={\n*(.*)\n*}", content, re.DOTALL)
-        if tags_match:
-            tags_chunk = tags_match.group(1)
-            self._categories = re.findall(
+        match = re.search(r"tags={\n*(.*)\n*}", content, re.DOTALL)
+        if match:
+            tags_chunk = match.group(1)
+            self._tags = re.findall(
                 r"^\s*\"(.+)\"\s*$", tags_chunk, re.MULTILINE
             )
 
-    def name(self) -> str:
-        return self._name
+        match = re.search(r"^name=\"(.+)\"$", content, re.MULTILINE)
+        if match:
+            self._name = match.group(1)
+
+        match = re.search(
+            r"^supported_version=\"(.+)\"$", content, re.MULTILINE
+        )
+        if match:
+            self._supported_version = match.group(1)
 
     def version(self) -> str:
         return self._version
 
-    def categories(self) -> List[str]:
-        return self._categories
+    def tags(self) -> List[str]:
+        return self._tags
+
+    def name(self) -> str:
+        return self._name
+
+    def supported_version(self) -> str:
+        return self._supported_version
 
 
 class TreeHelper:
