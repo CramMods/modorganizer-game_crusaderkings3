@@ -1,8 +1,8 @@
 try:
-    from PyQt6.QtCore import qCritical, qInfo
+    from PyQt6.QtCore import qCritical
     from PyQt6.QtWidgets import QDialog
 except Exception:
-    from PyQt5.QtCore import qCritical, qInfo
+    from PyQt5.QtCore import qCritical
     from PyQt5.QtWidgets import QDialog
 
 import mobase
@@ -66,35 +66,21 @@ class ArchiveInstaller(mobase.IPluginInstallerSimple):
     def priority(self) -> int:
         return 50
 
-    def onInstallationEnd(self, result, new_mod):
+    def onInstallationEnd(self, result, mod):
         if result == mobase.InstallResult.SUCCESS:
             # Set version
-            try:
-                version = mobase.VersionInfo(
-                    self._post_install_data["version"]
-                )
-                new_mod.setVersion(version)
-            except Exception as e:
-                qCritical(
-                    "[{}] failed to set version to {}. {}".format(
-                        new_mod.name(), version, str(e)
-                    )
-                )
-                return
+            version_string = self._post_install_data.get("version")
+            if version_string:
+                version = mobase.VersionInfo(version_string)
+                mod.setVersion(version)
 
             # Set categories
-            for category in new_mod.categories():
-                new_mod.removeCategory(category)
-            for category in self._post_install_data["categories"]:
-                try:
-                    new_mod.addCategory(category)
-                except Exception as e:
-                    qInfo(
-                        "[{}] failed to add category {}. {}".format(
-                            new_mod.name(), category, str(e)
-                        )
-                    )
-                    pass
+            for category in mod.categories():
+                mod.removeCategory(category)
+            categories = self._post_install_data.get("categories")
+            if categories:
+                for category in categories:
+                    mod.addCategory(category)
 
     # IPluginInstallerSimple Implementation
 
