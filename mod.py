@@ -136,6 +136,24 @@ class TreeHelper:
         )
         return source_dir
 
+    # Thumbnail
+
+    @staticmethod
+    def find_thumbnail(tree: mobase.IFileTree) -> mobase.FileTreeEntry:
+        thumbnail = tree.find(
+            "thumbnail.png", mobase.FileTreeEntry.FileTypes.FILE
+        )
+        if thumbnail:
+            return thumbnail
+
+        for entry in tree:
+            if entry.isDir():
+                thumbnail = TreeHelper.find_thumbnail(entry)
+                if thumbnail:
+                    return thumbnail
+
+        return None
+
     # Validate Directories
 
     @staticmethod
@@ -197,8 +215,11 @@ class TreeHelper:
     def to_installable(tree: mobase.IFileTree) -> mobase.IFileTree:
         new_tree = tree.createOrphanTree("")
         descriptor = TreeHelper.find_descriptor(tree, deep=True)
+        thumbnail = TreeHelper.find_thumbnail(tree)
         if descriptor:
             new_tree.copy(descriptor, "descriptor.mod")
+            if thumbnail:
+                new_tree.copy(thumbnail)
             content = TreeHelper.get_content_source(descriptor)
             for entry in content:
                 if entry.isDir():
