@@ -5,15 +5,15 @@ except Exception:
 
 import mobase
 
-from typing import List, Union
+from typing import Dict, List, Union
 
 from ..mod import Descriptor, TreeHelper
 from ..localization import localize_string
 
 
 class ArchiveInstaller(mobase.IPluginInstallerSimple):
-    _descriptor: Descriptor
     _organizer: mobase.IOrganizer
+    _post_install_data: Dict
 
     def __init__(self):
         super().__init__()
@@ -66,7 +66,9 @@ class ArchiveInstaller(mobase.IPluginInstallerSimple):
         if result == mobase.InstallResult.SUCCESS:
             # Set version
             try:
-                version = mobase.VersionInfo(self._descriptor.version())
+                version = mobase.VersionInfo(
+                    self._post_install_data["version"]
+                )
                 new_mod.setVersion(version)
             except Exception as e:
                 qCritical(
@@ -79,7 +81,7 @@ class ArchiveInstaller(mobase.IPluginInstallerSimple):
             # Set categories
             for category in new_mod.categories():
                 new_mod.removeCategory(category)
-            for category in self._descriptor.categories():
+            for category in self._post_install_data["categories"]:
                 try:
                     new_mod.addCategory(category)
                 except Exception as e:
@@ -94,7 +96,7 @@ class ArchiveInstaller(mobase.IPluginInstallerSimple):
 
     def install(
         self,
-        name: mobase.GuessedString,
+        guessed_name: mobase.GuessedString,
         tree: mobase.IFileTree,
         version: str,
         modId: int,
@@ -106,14 +108,14 @@ class ArchiveInstaller(mobase.IPluginInstallerSimple):
 
         descriptor_entry = TreeHelper.find_descriptor(install_tree)
         descriptor_path = self._manager().extractFile(descriptor_entry)
-        self._descriptor = Descriptor(descriptor_path)
+        descriptor = Descriptor(descriptor_path)
 
-        new_name = self._descriptor.name()
-        safe_chars = [" ", ".", "_"]
-        new_name = "".join(
-            c for c in new_name if c.isalnum() or c in safe_chars
-        ).rstrip()
-        name.update(new_name)
+        self._post_install_data = {
+            "categories": descriptor.tags(),
+            "version": descriptor.version(),
+        }
+
+        guessed_name.update(self._cleanName(descriptor.name()))
 
         final_tree = TreeHelper.to_final(install_tree)
         if not final_tree:
@@ -121,3 +123,11 @@ class ArchiveInstaller(mobase.IPluginInstallerSimple):
             return mobase.InstallResult.FAILED
 
         return final_tree
+
+    def _cleanName(self, name: str) -> str:
+        safe_chars = [" ", ".", "_"]
+        name_chars = []
+        for c in name:
+            safe_c = c if c in safe_chars or c.isalnum() else "_"
+            name_chars.append(safe_c)
+        return "".join(name_chars).rstrip()
