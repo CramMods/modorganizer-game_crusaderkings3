@@ -145,7 +145,7 @@ class ArchiveInstaller(mobase.IPluginInstallerSimple):
             "version": descriptor.version(),
         }
 
-        guessed_name.update(dialog.name())
+        guessed_name.update(self._cleanName(dialog.name()))
 
         final_tree = TreeHelper.to_final(install_tree)
         if not final_tree:
