@@ -1,7 +1,9 @@
 try:
     from PyQt6.QtCore import qCritical, qInfo
+    from PyQt6.QtWidgets import QDialog
 except Exception:
     from PyQt5.QtCore import qCritical, qInfo
+    from PyQt5.QtWidgets import QDialog
 
 import mobase
 
@@ -9,6 +11,8 @@ from typing import Dict, List, Union
 
 from ..mod import Descriptor, TreeHelper
 from ..localization import localize_string
+
+from .ui import Dialog
 
 
 class ArchiveInstaller(mobase.IPluginInstallerSimple):
@@ -110,12 +114,38 @@ class ArchiveInstaller(mobase.IPluginInstallerSimple):
         descriptor_path = self._manager().extractFile(descriptor_entry)
         descriptor = Descriptor(descriptor_path)
 
+        thumbnail_entry = TreeHelper.find_thumbnail(install_tree)
+        thumbnail_path = (
+            self._manager().extractFile(thumbnail_entry)
+            if thumbnail_entry
+            else ""
+        )
+
+        names = [descriptor.name()]
+        for variant in guessed_name.variants():
+            if variant not in names:
+                names.append(variant)
+
+        dialog = Dialog(
+            self._parentWidget(),
+            names=names,
+            image_path=thumbnail_path,
+            categories=descriptor.tags(),
+            version=descriptor.version(),
+            supported_version=descriptor.supported_version(),
+        )
+
+        if dialog.exec_() != QDialog.Accepted:
+            if dialog.manual():
+                return mobase.InstallResult.MANUAL_REQUESTED
+            return mobase.InstallResult.CANCELED
+
         self._post_install_data = {
             "categories": descriptor.tags(),
             "version": descriptor.version(),
         }
 
-        guessed_name.update(self._cleanName(descriptor.name()))
+        guessed_name.update(dialog.name())
 
         final_tree = TreeHelper.to_final(install_tree)
         if not final_tree:
