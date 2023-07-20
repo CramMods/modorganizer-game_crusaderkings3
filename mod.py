@@ -10,11 +10,9 @@ class Descriptor:
     _categories: List[str]
 
     def __init__(self, descriptor_path: str):
-        self._name = ""
-        self._version = ""
-        self._categories = []
-
-        with open(descriptor_path, "r") as descriptor_file:
+        with open(
+            descriptor_path, "r", encoding="utf-8-sig"
+        ) as descriptor_file:
             content = descriptor_file.read()
 
         name_match = re.search(r"^name=\"(.+)\"$", content, re.MULTILINE)
