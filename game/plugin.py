@@ -12,8 +12,8 @@ from typing import Dict, List
 
 from basic_games.steam_utils import find_games as find_steam_games
 
-from .localization import localize_string
-from .mod import ModDataChecker
+from ..localization import localize_string
+from ..mod import ModDataChecker
 
 
 class GamePlugin(mobase.IPluginGame):
