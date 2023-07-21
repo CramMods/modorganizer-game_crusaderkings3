@@ -186,8 +186,8 @@ class GamePlugin(mobase.IPluginGame):
         return []
 
     def savesDirectory(self) -> QDir:
-        savesPath = self.documentsDirectory().absoluteFilePath("save games")
-        return QDir(savesPath)
+        saves_path = self.documentsDirectory().absoluteFilePath("save games")
+        return QDir(saves_path)
 
     def setGamePath(self, path):
         self._gamePath = str(path)
