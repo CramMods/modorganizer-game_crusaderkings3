@@ -46,7 +46,7 @@ class GamePlugin(mobase.IPluginGame):
         return localize_string("Adds basic support for Crusader Kings III")
 
     def version(self) -> mobase.VersionInfo:
-        return mobase.VersionInfo(0, 1, 0)
+        return mobase.VersionInfo(0, 1, 1)
 
     def isActive(self) -> bool:
         if not self._organizer.managedGame():
@@ -180,7 +180,8 @@ class GamePlugin(mobase.IPluginGame):
         return []
 
     def savesDirectory(self) -> QDir:
-        return self.documentsDirectory().absoluteFilePath("save games")
+        savesPath = self.documentsDirectory().absoluteFilePath("save games")
+        return QDir(savesPath)
 
     def setGamePath(self, path):
         self._gamePath = str(path)
