@@ -46,7 +46,7 @@ class SaveGame(mobase.ISaveGame):
         )
 
     def getSaveGroupIdentifier(self) -> str:
-        return ""
+        return "{}, {}".format(self.character_name(), self.character_title())
 
     def valid(self) -> bool:
         return self._valid
