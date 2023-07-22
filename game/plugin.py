@@ -12,8 +12,9 @@ from typing import Dict, List
 
 from basic_games.steam_utils import find_games as find_steam_games
 
-from .localization import localize_string
-from .mod import ModDataChecker
+from ..localization import localize_string
+from ..mod import ModDataChecker
+from .save import SaveGame
 
 
 class GamePlugin(mobase.IPluginGame):
@@ -46,7 +47,7 @@ class GamePlugin(mobase.IPluginGame):
         return localize_string("Adds basic support for Crusader Kings III")
 
     def version(self) -> mobase.VersionInfo:
-        return mobase.VersionInfo(0, 1, 0)
+        return mobase.VersionInfo(0, 3, 1)
 
     def isActive(self) -> bool:
         if not self._organizer.managedGame():
@@ -159,7 +160,12 @@ class GamePlugin(mobase.IPluginGame):
         return bool(self._gamePath)
 
     def listSaves(self, folder: QDir) -> List[mobase.ISaveGame]:
-        return []
+        folder.setFilter(QDir.Files)
+        folder.setNameFilters(["*.ck3"])
+        return [
+            SaveGame(folder.absoluteFilePath(path))
+            for path in folder.entryList()
+        ]
 
     def loadOrderMechanism(self) -> mobase.LoadOrderMechanism:
         return mobase.LoadOrderMechanism.PluginsTxt
@@ -180,7 +186,8 @@ class GamePlugin(mobase.IPluginGame):
         return []
 
     def savesDirectory(self) -> QDir:
-        return self.documentsDirectory().absoluteFilePath("save games")
+        saves_path = self.documentsDirectory().absoluteFilePath("save games")
+        return QDir(saves_path)
 
     def setGamePath(self, path):
         self._gamePath = str(path)
