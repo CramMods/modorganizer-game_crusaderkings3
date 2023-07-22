@@ -47,7 +47,7 @@ class GamePlugin(mobase.IPluginGame):
         return localize_string("Adds basic support for Crusader Kings III")
 
     def version(self) -> mobase.VersionInfo:
-        return mobase.VersionInfo(0, 3, 0)
+        return mobase.VersionInfo(0, 3, 1)
 
     def isActive(self) -> bool:
         if not self._organizer.managedGame():
